@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 #request fornece a função form para passar dados do formulario para o servidor 
 #render_template trata-se de um Helper
 #importando framework
@@ -35,7 +35,7 @@ def criar():
     console = request.form['console']
     jogo = Jogo(nome, categoria, console)
     lista.append(jogo)
-    return render_template('lista.html', titulo = 'Jogos', jogos = lista)
+    return redirect('/')
 #para rodar a aplicação 
 app.run(
     debug=True
