@@ -1,5 +1,5 @@
-from crypt import methods
-from flask import Flask, render_template, request, redirect, session, flash
+
+from flask import Flask, render_template, request, redirect, session, flash, url_for
 #request fornece a função form para passar dados do formulario para o servidor 
 #render_template trata-se de um Helper
 #importando framework
@@ -30,7 +30,7 @@ def index():
 @app.route('/novo')
 def novo():
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        return redirect('/login?proxima=novo') #variavel proxima recebe valor 'novo'
+        return redirect(url_for('login', proxima = url_for('novo'))) #variavel proxima recebe valor 'novo'
     return render_template('novo.html', titulo='Novo Jogo')
 
 @app.route('/criar', methods = ['POST',])
@@ -40,7 +40,7 @@ def criar():
     console = request.form['console']
     jogo = Jogo(nome, categoria, console)
     lista.append(jogo)
-    return redirect('/')
+    return redirect(url_for('index'))
 
 @app.route('/login')
 def login():
@@ -53,16 +53,16 @@ def autenticar():
         session['usuario_logado'] = request.form['usuario']
         flash(request.form['usuario'] + ' logado com sucesso')
         proxima_pagina = request.form['proxima']
-        return redirect("/{}".format(proxima_pagina))
+        return redirect(proxima_pagina)
     else:
         flash('usuario não logado')
-        return redirect('/login')
+        return redirect(url_for('login'))
     
 @app.route('/logout')
 def logout():
     session['usuario_logado'] = None
     flash('Logout efetuado com sucesso!')
-    return redirect('/')
+    return redirect(url_for('index'))
 
 #para rodar a aplicação 
 app.run(
