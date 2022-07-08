@@ -29,6 +29,8 @@ def index():
 #criação da rota de cadastros de jogos
 @app.route('/novo')
 def novo():
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        return redirect('/login')
     return render_template('novo.html', titulo='Novo Jogo')
 
 @app.route('/criar', methods = ['POST',])
