@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect
+from crypt import methods
+from flask import Flask, render_template, request, redirect, session, flash
 #request fornece a função form para passar dados do formulario para o servidor 
 #render_template trata-se de um Helper
 #importando framework
@@ -17,6 +18,8 @@ lista = [jogo1, jogo2, jogo3]
 
 app = Flask(__name__)
 # __name__ faz uma referencia ao próprio arquivo em questão 
+app.secret_key = 'avada'
+#definindo a secret key
 
 #para utilizar é necessário criar as rotas da web e uma função especificando sua ação
 @app.route('/')
@@ -36,6 +39,27 @@ def criar():
     jogo = Jogo(nome, categoria, console)
     lista.append(jogo)
     return redirect('/')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/autenticar', methods = ['POST', ])
+def autenticar():
+    if 'alohomora' == request.form['senha']:
+        session['usuario logado'] = request.form['usuario']
+        flash(request.form['usuario'] + ' logado com sucesso')
+        return redirect('/')
+    else:
+        flash('usuario não logado')
+        return redirect('/login')
+    
+@app.route('/logout')
+def logout():
+    session['usuario_logado'] = None
+    flash('Logout efetuado com sucesso!')
+    return redirect('/')
+
 #para rodar a aplicação 
 app.run(
     debug=True
