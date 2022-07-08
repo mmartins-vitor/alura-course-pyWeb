@@ -4,6 +4,20 @@ from flask import Flask, render_template, request, redirect, session, flash, url
 #render_template trata-se de um Helper
 #importando framework
 
+class Usuario:
+    def __init__(self, nome, nickname, senha):
+        self.nome = nome
+        self.nickname = nickname
+        self.senha = senha
+
+usuario1 = Usuario("Bruno Divino", "BD", "alohomora")
+usuario2 = Usuario("Camila Ferreira", "Mila", "paozinho")
+usuario3 = Usuario("Guilherme Louro", "Cake", "Python_eh_vida")
+
+usuarios = { usuario1.nickname : usuario1,
+             usuario2.nickname : usuario2,
+             usuario3.nickname : usuario3 }
+
 class Jogo():
     def __init__(self, nome, categoria, console):
         self.nome = nome
@@ -49,13 +63,15 @@ def login():
 
 @app.route('/autenticar', methods = ['POST', ])
 def autenticar():
-    if 'alohomora' == request.form['senha']:
-        session['usuario_logado'] = request.form['usuario']
-        flash(request.form['usuario'] + ' logado com sucesso')
-        proxima_pagina = request.form['proxima']
-        return redirect(proxima_pagina)
+    if request.form['usuario'] in usuarios:
+        usuario = usuarios[request.form['usuario']]
+        if request.form['senha'] == usuario.senha:
+            session['usuario_logado'] = usuario.nickname
+            flash(usuario.nickname + ' logado com sucesso!')
+            proxima_pagina = request.form['proxima']
+            return redirect(proxima_pagina)
     else:
-        flash('usuario não logado')
+        flash('Usuário não logado.')
         return redirect(url_for('login'))
     
 @app.route('/logout')
